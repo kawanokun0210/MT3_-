@@ -1,7 +1,12 @@
 #include <Novice.h>
+#define _USE_MATH_DEFINE
+#include <Math.h>
+#include <assert.h>
 #include <Matrix4x4.h>
+#include <Vector3.h>
 
-const char kWindowTitle[] = "LE2B_09_カワノ_ユウキ";
+const char kWindowTitle[] = "LE2B_09_カワノユウキ";
+
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -10,8 +15,27 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Novice::Initialize(kWindowTitle, 1280, 720);
 
 	// キー入力結果を受け取る箱
-	char keys[256] = {0};
-	char preKeys[256] = {0};
+	char keys[256] = { 0 };
+	char preKeys[256] = { 0 };
+
+	Vector3 translate{ 4.1f,2.6f,0.8f };
+
+	Vector3 scale{ 1.5f,5.2f,7.3f };
+
+	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);
+
+	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
+
+	Vector3 point{ 2.3f,3.8f,1.4f };
+
+	Matrix4x4 transformMatrix = {
+		1.0f, 2.0f, 3.0f, 4.0f,
+		3.0f, 1.0f, 1.0f, 2.0f,
+		1.0f, 4.0f, 2.0f, 3.0f,
+		2.0f, 2.0f, 1.0f, 3.0f
+	};
+
+	Vector3 transformed = Transform(point, transformMatrix);
 
 	// ウィンドウの×ボタンが押されるまでループ
 	while (Novice::ProcessMessage() == 0) {
@@ -33,6 +57,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		///
 		/// ↓描画処理ここから
 		///
+
+		Matrix4x4Ex::VectorScreenPrintf(0, 0, transformed, "transformed");
+		Matrix4x4Ex::MatrixScreenPrintf(0, 35, translateMatrix, "translateMatrix");
+		Matrix4x4Ex::MatrixScreenPrintf(0, 130, scaleMatrix, "scaleMatrix");
 
 		///
 		/// ↑描画処理ここまで
