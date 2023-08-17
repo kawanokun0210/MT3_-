@@ -25,9 +25,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		.min{-0.5f, -0.5f, -0.5f},
 		.max{ 0.0f, 0.0f, 0.0f}
 	};
-	AABB aabb2{
-		.min{0.2f, 0.2f, 0.2f},
-		.max{ 1.0f, 1.0f, 1.0f}
+	Sphere sphere{
+		{1.0f, 1.0f, 1.0f},
+		0.1f
 	};
 
 	uint32_t colorS1 = WHITE;
@@ -83,13 +83,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		cameraTranslate = MatrixMath::TransformCoord(move, trans);
 
 		worldMatrix = MatrixMath::MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f });
+
 		cameraMatrix = MatrixMath::MakeAffineMatrix({ 1.0f, 1.0f, 1.0f }, cameraRotate, cameraTranslate);
+
 		viewMatrix = MatrixMath::Inverse(cameraMatrix);
+
 		projectionMatrix = MatrixMath::MakePerspectiveFovMatrix(0.45f, float(kWindowWidth) / float(kWindowHeight), 0.1f, 100.0f);
+
 		worldViewProjectionMatrix = MatrixMath::Multiply(worldMatrix, MatrixMath::Multiply(viewMatrix, projectionMatrix));
+
 		viewportMatrix = MatrixMath::MakeViewPortMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
-		if (MatrixMath::IsCollision(aabb1, aabb2)) {
+		if (MatrixMath::IsCollision(aabb1, sphere)) {
 			colorS1 = RED;
 		}
 		else {
@@ -107,7 +112,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		MatrixDraw::DrawGrid(worldViewProjectionMatrix, viewportMatrix);
 
 		MatrixDraw::DrawAABB(aabb1, worldViewProjectionMatrix, viewportMatrix, colorS1);
-		MatrixDraw::DrawAABB(aabb2, worldViewProjectionMatrix, viewportMatrix, colorS2);
+		MatrixDraw::DrawShere(sphere, worldViewProjectionMatrix, viewportMatrix, colorS2);
 
 		ImGui::Begin("Debug");
 		ImGui::DragFloat3("cameraTRa", &cameraTranslate.x, 0.1f, -50.0f, 50.0f);
@@ -115,8 +120,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		ImGui::DragFloat3("AABB1min", &aabb1.min.x, 0.1f, -1.0f, 5.0f);
 		ImGui::DragFloat3("AABB1max", &aabb1.max.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("AABB2min", &aabb2.min.x, 0.1f, -1.0f, 5.0f);
-		ImGui::DragFloat3("AABB2max", &aabb2.max.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("sphereC", &sphere.center.x, 0.1f, -1.0f, 5.0f);
+		ImGui::DragFloat3("sphereR", &sphere.radius, 0.1f, -1.0f, 5.0f);
 		ImGui::End();
 
 		///
